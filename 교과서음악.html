@@ -1,70 +1,67 @@
+<div>Teachable Machine Audio Model - p5.js and ml5.js</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"></script>
 <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
 <script type="text/javascript">
-  // Global variable to store the classifier
 let classifier;
-
-// Label
 let label = 'listening...';
-let confidence = 0.0; // ml5.js는 confidence를 함께 제공하므로 이를 사용
-
-// Teachable Machine model URL:
 let soundModel = 'https://teachablemachine.withgoogle.com/models/teLg6zWRJ/';
 
 
 function preload() {
-  // Load the model
   classifier = ml5.soundClassifier(soundModel + 'model.json');
 }
 
 function setup() {
   createCanvas(320, 240);
-  // Start classifying
-  // The sound model will continuously listen to the microphone
   classifier.classify(gotResult);
 }
 
 function draw() {
   background(0);
-  // Draw the label in the canvas
   fill(255);
   textSize(32);
   textAlign(CENTER, CENTER);
-  
-  const BACKGROUND_NOISE_LABEL = '_background_noise_';
-  
-  // 인식된 라벨이 배경 소음이 아니면서, 어느 정도 확신이 있을 때 (예: 70% 이상)
-  if (label !== BACKGROUND_NOISE_LABEL && confidence > 0.70) {
-      fill(50, 200, 50); // 인식된 음악은 녹색으로 표시
-      textSize(24);
-      // "인식된 음악: [제목]" 형태로 출력
-      text(`인식된 음악: ${label}`, width / 2, height / 2 - 20);
-      textSize(16);
-      text(`(확률: ${(confidence * 100).toFixed(1)}%)`, width / 2, height / 2 + 20);
 
-  } else if (label === BACKGROUND_NOISE_LABEL) {
-      fill(255, 165, 0); // 배경 소음은 주황색으로 표시
-      textSize(24);
-      text('음악을 기다리는 중...', width / 2, height / 2);
-  } else {
-      // 그 외의 경우 (다른 소리이거나 확신도가 낮은 경우)
+  let data = label;
+
+  if (label === '남생아 놀아라') {
+    data = '남생아 놀아라';
+  } else if (label === '개구쟁이') {
+    data = '개구쟁이';
+  } else if (label === '숲 속을 걸어요') {
+    data = '숲 속을 걸어요';
+  } else if (label === '난 산이 좋아') {
+    data = '난 산이 좋아';
+  } else if (label === '가을길') {
+    data = '가을길';
+  } else if (label === '달떡') {
+    data = '달떡';
+  } else if (label === '이어달리기') {
+    data = '이어달리기';
+  } else if (label === '겨울이 오면') {
+    data = '겨울이 오면';
+  } else if (label === '징글벨') {
+    data = '징글벨';
+  } else if (label === '군밤타령') {
+    data = '군밤타령';
+  } else if (label === '_background_noise_') {
+      data = '음악을 기다리는 중...';
+      fill(255, 165, 0);
+  } else {
+      data = label; 
       fill(255);
-      textSize(24);
-      text('Listening...', width / 2, height / 2);
   }
+  
+  text(data, width / 2, height / 2);
 }
 
 
-// The model recognizing a sound will trigger this event (원래대로 복구)
 function gotResult(error, results) {
   if (error) {
     console.error(error);
     return;
   }
-  // The results are in an array ordered by confidence.
-  // 가장 높은 확률의 라벨과 확신도를 전역 변수에 저장합니다.
   label = results[0].label;
-  confidence = results[0].confidence;
 }
 </script>
